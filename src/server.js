@@ -20,7 +20,7 @@ const init = async () => {
     -
     -
     -
-    - To the infinity, and beyond ------> ${server.info.uri}
+    - Server running on ------> ${server.info.uri}
     -
     -
     -
