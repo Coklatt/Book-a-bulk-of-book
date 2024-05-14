@@ -1,0 +1,27 @@
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH and deploy app
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |-
+            ./logger.sh Book-a-bulk-of-book & pid=$!
+             iostat -d sda 1 >> logs/io.temp & iopid=$!
+            cd Book-a-bulk-of-book
+            git pull origin master
+            npm i
+            pm2 restart bbb
+             kill $iopid
+             kill $pid
+             cd ..
+             ./io_logger.sh Book-a-bulk-of-book
+          username: ${{ secrets.SSH_USERNAME }}
+name: Continuous Deployment
+'on':
+  push:
+    branches:
+      - master
